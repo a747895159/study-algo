@@ -1,4 +1,4 @@
-package com.person.algo;
+package com.person.algo.lianbiao;
 
 public class ListNode {
     int val;
