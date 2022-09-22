@@ -22,15 +22,25 @@ public class Test0009 {
     private static int[] flag;
 
     /**
+     * 记录子集元素下标是否已使用
+     */
+    private static int[] usedFlag;
+
+    /**
      * 元素子集集合
      */
     private static List<List<Integer>> result = new ArrayList<>();
 
     public static void main(String[] args) {
-        int[] arr = {1, 2, 5, 3, 7};
-        Arrays.sort(arr);
+//        int[] arr = {1, 2, 5, 3, 7};
+        int[] arr = {11,13,15,23};
         flag = new int[arr.length];
-        int sum = 9;
+        usedFlag = new int[arr.length];
+        int total = Arrays.stream(arr).sum();
+        if (total % 2 == 1) {
+            return;
+        }
+        int sum = total / 2;
         calculateSum(arr, sum, arr.length - 1);
         System.out.println(result);
     }
@@ -38,26 +48,33 @@ public class Test0009 {
     /**
      * 支持数组分割N个子集 和等于 指定数
      * 递归算法：取 length-1 元素开始,计算出和为sum的元素下标。
+     *
+     * @return 返回是否递归成功
      */
-    private static void calculateSum(int[] arr, int sum, int length) {
-
+    private static boolean calculateSum(int[] arr, int sum, int length) {
         int index;
         if (sum == 0) {
             List<Integer> r = new ArrayList<>();
             for (index = 0; index < flag.length; index++) {
                 if (flag[index] > 0) {
                     r.add(arr[index]);
+                    usedFlag[index] = 1;
                 }
             }
             result.add(r);
+            return true;
         }
         for (index = length; index >= 0; index--) {
             int n = sum - arr[index];
-            if (flag[index] == 0 && n >= 0) {
+            if (usedFlag[index] == 0 && flag[index] == 0 && n >= 0) {
                 flag[index] = 1;
-                calculateSum(arr, n, index - 1);
+                boolean b = calculateSum(arr, n, index - 1);
                 flag[index] = 0;
+                if (b) {
+                    break;
+                }
             }
         }
+        return false;
     }
 }
