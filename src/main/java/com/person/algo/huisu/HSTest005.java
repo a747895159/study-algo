@@ -3,55 +3,46 @@ package com.person.algo.huisu;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * 组合总和II
- * 给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
- * candidates 中的每个数字在每个组合中只能使用一次。
- * 说明： 所有数字（包括目标数）都是正整数。解集不能包含重复的组合。
- * 输入: candidates = [2,5,2,1,2], target = 5,
- * 输出：[[1,2,2],[5]]
+ * 手机电话号码的字母组合
+ * 给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+ * 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+ * 输入："23"
+ * 输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
  *
  * @author : ZhouBin
  */
 public class HSTest005 {
 
-    private static List<List<Integer>> result = new ArrayList<>();
+    private static List<String> result = new ArrayList<>();
 
-    private static List<Integer> path = new ArrayList<>();
-
-    private static boolean[] used;
+    private static StringBuilder temp = new StringBuilder();
+    ;
 
     public static void main(String[] args) {
-        int[] nums = {1, 1, 2, 5, 6, 7, 10};
-        Arrays.sort(nums);
-        used = new boolean[nums.length];
-        backTrack(8, nums, 0, 0);
+        //初始对应所有的数字，为了直接对应2-9，新增了两个无效的字符串""
+        String[] numString = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        backtrack("27", numString, 0);
         System.out.println(JSONObject.toJSONString(result));
     }
 
-    private static void backTrack(int target, int[] arr, int curSum, int start) {
-        if (target == curSum) {
-            result.add(new ArrayList<>(path));
+    private static void backtrack(String digits, String[] numString, int start) {
+        if (start == digits.length()) {
+            result.add(temp.toString());
             return;
         }
-        for (int i = start; i < arr.length; i++) {
-            if (i > 0 && arr[i] == arr[i - 1] && !used[i - 1]) {
-                continue;
-            }
-            if (curSum + arr[i] > target) {
-                break;
-            }
-            path.add(arr[i]);
-            curSum += arr[i];
-            used[i] = true;
-            backTrack(target, arr, curSum, i + 1);
-            curSum -= arr[i];
-            path.remove(path.size() - 1);
-            used[i] = false;
+        //获取当前位(start)数字对应的char --> ascii ,再减去 '0'
+        String str = numString[digits.charAt(start) - '0'];
+//        String str = numString[Integer.parseInt(digits.substring(start, start + 1))];
+        for (int i = 0; i < str.length(); i++) {
+            temp.append(str.charAt(i));
+            //递归，处理下一层
+            backtrack(digits, numString, start + 1);
+            temp.deleteCharAt(temp.length() - 1);
         }
 
     }
+
 }

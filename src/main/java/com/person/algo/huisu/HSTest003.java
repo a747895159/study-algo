@@ -3,46 +3,52 @@ package com.person.algo.huisu;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * 手机电话号码的字母组合
- * 给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
- * 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
- * 输入："23"
- * 输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+ * 组合总和III
+ * 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+ * candidates 中的数字可以无限制重复被选取。
+ * 示例 1：
+ * 输入：candidates = [2,3,6,7], target = 7,
+ * 所求解集为： [ [7], [2,2,3] ]
+ * 示例 2：
+ * 输入：candidates = [2,3,5], target = 8,
+ * 所求解集为： [ [2,2,2,2], [2,3,3], [3,5] ]
  *
  * @author : ZhouBin
  */
 public class HSTest003 {
 
-    private static List<String> result = new ArrayList<>();
+    private static List<List<Integer>> result = new ArrayList<>();
 
-    private static StringBuilder temp = new StringBuilder();
-    ;
+    private static List<Integer> path = new ArrayList<>();
 
     public static void main(String[] args) {
-        //初始对应所有的数字，为了直接对应2-9，新增了两个无效的字符串""
-        String[] numString = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
-        backtrack("27", numString, 0);
+        int[] nums = {1, 2, 3};
+        Arrays.sort(nums);
+        backTrack(4, nums, 0, 0);
         System.out.println(JSONObject.toJSONString(result));
     }
 
-    private static void backtrack(String digits, String[] numString, int start) {
-        if (start == digits.length()) {
-            result.add(temp.toString());
+    private static void backTrack(int target, int[] arr, int curSum, int start) {
+        if (curSum > target) {
             return;
         }
-        //获取当前位(start)数字对应的char --> ascii ,再减去 '0'
-        String str = numString[digits.charAt(start) - '0'];
-//        String str = numString[Integer.parseInt(digits.substring(start, start + 1))];
-        for (int i = 0; i < str.length(); i++) {
-            temp.append(str.charAt(i));
-            //递归，处理下一层
-            backtrack(digits, numString, start + 1);
-            temp.deleteCharAt(temp.length() - 1);
+        if (target == curSum) {
+            result.add(new ArrayList<>(path));
+            return;
+        }
+        //递归起始 如果0 ，则是求的排列，排列强调顺序，(1,5)和(5,1)是两个不同的排列。
+        //递归起始 如果是start ，则是求组合，组合不关心顺序，(1,5)和(5,1)是同一个组合。
+        for (int i = start; i < arr.length; i++) {
+            path.add(arr[i]);
+            curSum += arr[i];
+            backTrack(target, arr, curSum, i);
+            curSum -= arr[i];
+            path.remove(path.size() - 1);
         }
 
     }
-
 }
