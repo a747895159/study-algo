@@ -6,57 +6,93 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 最后一块石头的重量II
- * 有一堆石头，每块石头的重量都是正整数。
- * 每一回合，从中选出任意两块石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，且 x <= y。那么粉碎的可能结果如下：
- * 如果 x == y，那么两块石头都会被完全粉碎；
- * 如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
- * 示例：
- * 输入：[2,7,4,1,8,1]
- * 输出：1
+ * 分割等和子集
+ * 给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等
+ * 示例 1:
+ * 输入: [1, 5, 11, 5]
+ * 输出: true
+ * 解释: 数组可以分割成 [1, 5, 5] 和 [11].
  *
  * @author : ZhouBin
  */
 public class DGTest006 {
 
-    /**
-     * 本题是求最小重量，假设将石头分成2堆，每堆重量是总重量一半。
-     * 定义 dp[j] 表示J重量时，当前堆石头可组成的总重量；
-     */
-    public static void main(String[] args) {
-        int[] nums = {2, 7, 4, 1, 8, 1};
-        int sum = 0;
-        for (int num : nums) {
-            sum += num;
-        }
-        int target = sum / 2;
-        //表示J重量时，当前堆石头可组成的总重量；
-        int[] dp = new int[target + 1];
-        for (int i = 0; i < nums.length; i++) {
-            for (int j = target; j >= nums[i]; j--) {
-                dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
-            }
-        }
-        //本题是求最小重量，拿 总量 - 2倍的平均重量时所放的实际重量
-        System.out.println(sum - 2 * dp[target]);
+    private static boolean[] used;
+    private static List<List<Integer>> result = new ArrayList<>();
+    private static List<Integer> path = new ArrayList<>();
 
-        backTrack(dp[target], nums);
+    public static void main(String[] args) {
+        int[] nums = {1, 5, 11, 5};
+        used = new boolean[nums.length];
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        if (sum % 2 != 0) {
+            System.out.println("false");
+        }
+        canPartition(nums, sum / 2, 0);
+        System.out.println(JSONObject.toJSONString(result));
     }
 
     /**
      * 回溯法
      */
-    public static void backTrack(int agvWeight, int[] nums) {
-        System.out.println("相对平均重量" + agvWeight);
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < nums.length && agvWeight >= 0; i++) {
-            if (nums[i] <= agvWeight) {
-                list.add(nums[i]);
-                agvWeight -= nums[i];
-            }
+    public static void canPartition(int[] nums, int target, int current) {
+        if (current == target) {
+            result.add(new ArrayList<>(path));
+            return;
         }
-        System.out.println(JSONObject.toJSONString(list));
+        for (int i = 0; i < nums.length; i++) {
+            if (!used[i] && current + nums[i] <= target) {
+                used[i] = true;
+                current += nums[i];
+                path.add(nums[i]);
+                canPartition(nums, target, current);
+                current -= nums[i];
+                path.remove(path.size() - 1);
+            }
+
+        }
+
     }
 
+    /**
+     * 动态规划解法(二维数组)
+     */
+    public static void canPartition2(int[] nums, int target) {
+        //dp[i][j]表示从数组的 [0, i] 这个子区间内挑选一些正整数每个数只能用一次，使得这些数的和恰好等于 j。
+        int[][] dp = new int[nums.length][target + 1];
+        for (int j = nums[0]; j < target; j++) {
+            dp[0][j] = nums[0];
+        }
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < target; j++) {
+                if (j < nums[i]) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i - 1][j - nums[i]] + nums[i]);
+                }
+            }
+        }
+    }
+
+    /**
+     * 动态规划解法(一维数组)
+     */
+    public static void canPartition3(int[] nums, int target) {
+        //dp[i]目标和为i时,当前数据的最大值
+        int[] dp = new int[target + 1];
+        for (int i = 0; i < nums.length; i++) {
+            for (int j = target; j >= nums[i]; j--) {
+                //物品 i 的重量是 nums[i]，其价值也是 nums[i]
+                dp[j] = Math.max(dp[j], dp[j - nums[i]] + nums[i]);
+            }
+            //剪枝一下，每一次完成内层的for-loop，立即检查是否dp[target] == target，
+            if (dp[target] == target) {
+                break;
+            }
+        }
+    }
 
 }

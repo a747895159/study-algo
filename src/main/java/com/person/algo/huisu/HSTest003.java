@@ -40,8 +40,8 @@ public class HSTest003 {
             result.add(new ArrayList<>(path));
             return;
         }
-        //递归起始 如果0 ，则是求的排列，排列强调顺序，(1,5)和(5,1)是两个不同的排列。
-        //递归起始 如果是start ，则是求组合，组合不关心顺序，(1,5)和(5,1)是同一个组合。
+        //递归起始 如果0 ，则是求的 **排列**，排列强调顺序，(1,5)和(5,1)是两个不同的排列。
+        //递归起始 如果是start,则是求 **组合**，组合不关心顺序，(1,5)和(5,1)是同一个组合。
         for (int i = start; i < arr.length; i++) {
             path.add(arr[i]);
             curSum += arr[i];
