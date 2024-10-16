@@ -66,6 +66,7 @@ public class DGTest006 {
         for (int j = nums[0]; j < target; j++) {
             dp[0][j] = nums[0];
         }
+        // 二维数组方式，先判断物品 在判断背包
         for (int i = 1; i < nums.length; i++) {
             for (int j = 0; j < target; j++) {
                 if (j < nums[i]) {

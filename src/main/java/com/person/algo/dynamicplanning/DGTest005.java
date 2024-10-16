@@ -34,7 +34,7 @@ public class DGTest005 {
         return dp[bagWeight];
     }
 
-    //先遍历背包，再遍历物品
+    //先遍历背包，再遍历物品，此种需要特殊判断
     private static int dp_OPT2(int bagWeight) {
         int[] dp = new int[bagWeight + 1];
         //完全背包，物品可以重复，必须使用正序

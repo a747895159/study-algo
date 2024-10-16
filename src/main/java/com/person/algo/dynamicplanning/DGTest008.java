@@ -38,7 +38,13 @@ public class DGTest008 {
         for (int i = 0; i < nums.length; i++) {
             // 倒序可以避免重复计算，避免重复使用。 如果重复使用，使用正序 for (int j = nums[i]; j <= bagSize; j++){
             for (int j = bagSize; j >= nums[i]; j--) {
-                // 在求装满背包有几种方法的情况下，递推公式一般为 dp[j] = dp[j] + dp[j - nums[i]]
+                /*
+                 * 求装满背包有几种方法的情况下 二维数据求方法时 , dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i]] ;
+                 * dp[i - 1][j]代表不放当前物品，dp[i - 1][j - nums[i]]代表放当前物品;
+                 * 递推公式变成一维数组的时候，dp[j] = dp[j] + dp[j - nums[i]]；
+                 *
+                 * 再求背包最大值时，dp[j] = max(dp[j], dp[j - weight[i]] + value[i]);
+                 */
                 dp[j] = dp[j] + dp[j - nums[i]];
             }
         }
